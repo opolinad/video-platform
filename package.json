@@ -6,8 +6,8 @@
   "scripts": {
     "start:dev": "nodemon src/app.ts",
     "start:prod:": "node dist/app.js",
-    "build:dev": "npx sequelize-cli init && tsc",
-    "build:prod": "tsc",
+    "build:dev": "npx sequelize-cli init && tsc && npx sequelize-cli db:migrate",
+    "build:prod": "npx sequelize-cli init && tsc && npx sequelize-cli db:migrate",
     "lint": "eslint . --ext .ts",
     "migrate": " tsc && npx sequelize-cli db:migrate",
     "seed": "tsc && npx sequelize-cli db:seed:all"
