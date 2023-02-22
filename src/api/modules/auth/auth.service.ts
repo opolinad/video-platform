@@ -8,12 +8,17 @@ import { mapErrorToString } from '../../utils/mapErrorsToString.utils';
 dotenv.config();
 
 interface userInformation {
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
-    photoUrl: string;
+    photoUrl?: string;
     password: string;
-    roleId: number;
+    roleId?: number;
+}
+
+interface token {
+    id: number;
+    exp: number
 }
 
 export const registerAndLogInUser = async (userInformation: userInformation) => {
@@ -34,9 +39,35 @@ const saveUserInDatabase = async (userInformation: userInformation) => {
     return userCreated;
 };
 
-const generateAuthToken = async (id:number) => {
+const generateAuthToken = async (id: number) => {
     const token = await jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30m',
+        expiresIn: '5s',
     });
     return token;
+}
+
+export const logInUser = async (userInformation: userInformation) => {
+    try {
+        const user = await User.findOne({ where: { email: userInformation.email } });
+        const passwordMatch = await bcrypt.compare(userInformation.password, user.password);
+        if (passwordMatch) {
+            return await generateAuthToken(user.id);
+        } else {
+            throw new BusinessException(403, 'Invalid credentials');
+        }
+    } catch (error) {
+        throw new BusinessException(403, 'Invalid credentials');
+    }
+
+}
+
+export const newExpireFor = async (token:string) => {
+    try {
+        const tokenContent:(string|jwt.JwtPayload) = jwt.verify(token, process.env.JWT_SECRET);
+        return await generateAuthToken((tokenContent as token).id);
+
+    } catch (error) {
+        throw new BusinessException(403, 'User not authenticated');
+    }
+
 }

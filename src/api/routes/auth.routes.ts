@@ -1,19 +1,11 @@
 import express from 'express';
-import { signUpUser } from '../modules/auth/auth.controller';
-import { signUpUserValidator } from '../modules/auth/auth.validators';
+import { refreshToken, signInUser, signUpUser } from '../modules/auth/auth.controller';
+import { refreshTokenValidator, signInUserValidator, signUpUserValidator } from '../modules/auth/auth.validators';
 
 const router = express.Router();
-try {
-    router.post('/sign-in', signUpUserValidator, signUpUser);
-} catch (error) {
-    console.log('**************************************');
-    console.log('**************************************');
-    console.log('**************************************');
-    console.log('**************************************');
-    console.log('**************************************');
-    console.log('**************************************');
-}
-// router.post('/sign-up', );
-// router.post('/refresh-token', );
+
+router.post('/log-in', signInUserValidator, signInUser);
+router.post('/sign-up', signUpUserValidator, signUpUser);
+router.post('/refresh-token',refreshTokenValidator, refreshToken);
 
 export default router;
