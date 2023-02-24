@@ -8,6 +8,11 @@ export const listAllVideos = async (req: Request, res: Response) => {
     try {
         const pagination = paginationItems(page as string, perPage as string);
         const videos = await getVideos(pagination);
+        res.json(videos);
+    } catch (error) {
+        throw new ServerException();
+    }
+}
 
         res.json({videos});
     } catch (error) {
