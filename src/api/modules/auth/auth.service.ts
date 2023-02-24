@@ -41,7 +41,7 @@ const saveUserInDatabase = async (userInformation: userInformation) => {
 
 const generateAuthToken = async (id: number) => {
     const token = await jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '5s',
+        expiresIn: '15m',
     });
     return token;
 }
