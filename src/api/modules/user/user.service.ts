@@ -3,6 +3,7 @@ import Follower from '../../../db/models/follower.model';
 import LikedVideo from '../../../db/models/likedVideo.model';
 import User from '../../../db/models/user.model';
 import Video from '../../../db/models/video.model';
+import { ServerException } from '../../errors/serverException.errors';
 
 interface userProfile extends User{
     followers?: User[];
@@ -10,14 +11,18 @@ interface userProfile extends User{
 }
 
 export const getUserProfile = async (user: User) => {
-    const userProfile: userProfile = user.get({plain:true});
-    const followers = await getFollowersOfUser(user.id);
-    const likedVideos = await getLikedVideosOfUser(user.id);
+    try {
+        const userProfile: userProfile = user.get({plain:true});
+        const followers = await getFollowersOfUser(user.id);
+        const likedVideos = await getLikedVideosOfUser(user.id);
 
-    userProfile.followers = followers;
-    userProfile.likedVideos = likedVideos;
+        userProfile.followers = followers;
+        userProfile.likedVideos = likedVideos;
 
-    return userProfile;
+        return userProfile;
+    } catch (error) {
+        throw new ServerException();
+    }
 }
 
 const getFollowersOfUser = async (userId: number) => {
