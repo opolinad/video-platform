@@ -4,20 +4,21 @@ import LikedVideo from '../../../db/models/likedVideo.model';
 import User from '../../../db/models/user.model';
 import Video from '../../../db/models/video.model';
 import { ServerException } from '../../errors/serverException.errors';
+import { paginateResults, pagination } from '../../utils/paginationItems.utils';
 
-interface userProfile extends User{
+interface userProfile extends User {
     followers?: User[];
     likedVideos?: Video[];
 }
 
 export const getUserProfile = async (user: User) => {
     try {
-        const userProfile: userProfile = user.get({plain:true});
+        const userProfile: userProfile = user.get({ plain: true });
         const followers = await getFollowersOfUser(user.id);
         const likedVideos = await getLikedVideosOfUser(user.id);
 
         userProfile.followers = followers;
-        userProfile.likedVideos = likedVideos;
+        userProfile.likedVideos = likedVideos as Video[];
 
         return userProfile;
     } catch (error) {
@@ -42,31 +43,54 @@ const getFollowersOfUser = async (userId: number) => {
                 [Op.in]: followersIds
             }
         },
-        raw:true
+        raw: true
     });
 
     return followers;
 }
 
-const getLikedVideosOfUser = async (userId: number) => {
-    const videosLikedByUser = await LikedVideo.findAll({
-        where: {
-            likedByUserId: userId
-        }
-    });
-
-    const likedVideosIds = videosLikedByUser.map(video => video.id);
-
-    const likedVideos = await Video.findAll({
-        where:
-        {
-            id:
-            {
-                [Op.in]: likedVideosIds
+export const getLikedVideosOfUser = async (userId: number, pagination?: pagination, url?:string) => {
+    try {
+        const videosLikedByUser = await LikedVideo.findAll({
+            where: {
+                likedByUserId: userId
             }
-        },
-        raw:true
-    });
+        });
 
-    return likedVideos;
+        const likedVideosIds = videosLikedByUser.map(video => video.id);
+        let likedVideos;
+        if (pagination) {
+            const { limit, offset, pageNumber } = pagination;
+
+            const videos = await Video.findAndCountAll({
+                where:
+                {
+                    id:
+                    {
+                        [Op.in]: likedVideosIds
+                    }
+                },
+                raw: true,
+                limit,
+                offset
+            });
+
+            likedVideos = paginateResults(videos, limit, pageNumber, url);
+        } else {
+            likedVideos = await Video.findAll({
+                where:
+                {
+                    id:
+                    {
+                        [Op.in]: likedVideosIds
+                    }
+                },
+                raw: true
+            });
+        }
+
+        return likedVideos;
+    } catch (error) {
+        throw new ServerException();
+    }
 }
