@@ -25,3 +25,12 @@ export const saveVideo = async (videoInformation: videoInformation) => {
         throw new ServerException();
     }
 }
+
+export const changePublishParamater = async (isPublished:boolean, video:Video) => {
+    try {
+        const videoUpdated = await video.update({published: isPublished});
+        return videoUpdated;
+    } catch (error) {
+        throw new ServerException();
+    }
+}

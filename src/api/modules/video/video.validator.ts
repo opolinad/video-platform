@@ -20,3 +20,10 @@ export const createVideoValidator: (ValidationChain | middlewareFunction)[] = [
         .isInt(),
     validateParameters
 ];
+
+export const changePublishValidator: (ValidationChain | middlewareFunction)[] = [
+    body('published')
+        .notEmpty()
+        .isBoolean(),
+    validateParameters
+];
