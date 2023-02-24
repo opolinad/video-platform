@@ -1,3 +1,4 @@
+import LikedVideo from '../../../db/models/likedVideo.model';
 import Video from '../../../db/models/video.model'
 import { ServerException } from '../../errors/serverException.errors';
 import { paginateResults, pagination } from '../../utils/paginationItems.utils';
@@ -43,4 +44,19 @@ export const modifyVideo = async (videoInformation: videoInformation, videoId:nu
     } catch (error) {
         throw new ServerException();
     }
+}
+
+export const updateLikeStatusForVideoByUser = async (userId:number, videoId:number) => {
+    const [likedVideo, created] = await LikedVideo.findOrCreate({
+        where: {
+            likedByUserId:userId,
+            videoId
+        },
+        defaults: {}
+    });
+    if (!created) {
+        likedVideo.destroy();
+        return `User ${userId} don't like anymore video ${videoId}`;
+    }
+    return `User ${userId} likes the video ${videoId}`;
 }
