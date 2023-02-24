@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ServerException } from '../../errors/serverException.errors';
 import { videoRequest } from '../../middlewares/videoExist.middleware';
 import { paginationItems } from '../../utils/paginationItems.utils';
-import { changePublishParamater, getVideos, saveVideo } from './video.service';
+import { changePublishParamater, getVideos, modifyVideo, saveVideo } from './video.service';
 
 export const listAllVideos = async (req: Request, res: Response) => {
     const { page, perPage } = req.query
@@ -35,4 +35,13 @@ export const changePublish = async (req: videoRequest, res: Response) => {
 
 export const videoDetails = async (req: videoRequest, res: Response) => {
     res.json({ video: req.video });
+}
+
+export const updateVideo = async (req: videoRequest, res: Response) => {
+    try {
+        const video = await modifyVideo(req.body, req.video.id);
+        res.json({ video });
+    } catch (error) {
+        res.status(error.status).json({ error: error.message });
+    }
 }

@@ -34,3 +34,13 @@ export const changePublishParamater = async (isPublished:boolean, video:Video) =
         throw new ServerException();
     }
 }
+
+export const modifyVideo = async (videoInformation: videoInformation, videoId:number) => {
+    try {
+        await Video.update({ ...videoInformation }, { where: { id: videoId } });
+        const video = Video.findByPk(videoId);
+        return video;
+    } catch (error) {
+        throw new ServerException();
+    }
+}

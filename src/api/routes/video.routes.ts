@@ -1,7 +1,7 @@
 import express from 'express';
 import { userExists } from '../middlewares/userExist.middleware';
 import { videoExists } from '../middlewares/videoExist.middleware';
-import { listAllVideos, createVideo, changePublish, videoDetails } from '../modules/video/video.controller';
+import { listAllVideos, createVideo, changePublish, videoDetails, updateVideo } from '../modules/video/video.controller';
 import { changePublishValidator, createVideoValidator } from '../modules/video/video.validator';
 
 const router = express.Router();
@@ -12,6 +12,7 @@ router.route('/')
 
 router.route('/:videoId')
     .patch(videoExists, changePublishValidator, changePublish)
+    .put(videoExists, createVideoValidator, updateVideo)
     .get(videoExists, videoDetails);
 
 export default router;
