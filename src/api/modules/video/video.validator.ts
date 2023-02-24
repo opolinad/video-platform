@@ -1,11 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
-import { ValidationChain, param } from 'express-validator';
+import { ValidationChain, body } from 'express-validator';
 import { validateParameters } from '../../utils/validateParameters.utils';
 
 type middlewareFunction = (req: Request, res: Response, next: NextFunction) => void;
 
-export const listOwnerInformationValidator: (ValidationChain | middlewareFunction)[] = [
-    param('userId')
+export const createVideoValidator: (ValidationChain | middlewareFunction)[] = [
+    body('title')
+        .notEmpty(),
+    body('description')
+        .notEmpty(),
+    body('url')
+        .notEmpty()
+        .isURL(),
+    body('thumbnailUrl')
+        .notEmpty()
+        .isURL(),
+    body('userId')
         .notEmpty()
         .isInt(),
     validateParameters
