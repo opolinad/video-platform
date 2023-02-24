@@ -49,7 +49,7 @@ const getFollowersOfUser = async (userId: number) => {
     return followers;
 }
 
-export const getLikedVideosOfUser = async (userId: number, pagination?: pagination, url?:string) => {
+export const getLikedVideosOfUser = async (userId: number, pagination?: pagination, url?: string) => {
     try {
         const videosLikedByUser = await LikedVideo.findAll({
             where: {
@@ -93,4 +93,19 @@ export const getLikedVideosOfUser = async (userId: number, pagination?: paginati
     } catch (error) {
         throw new ServerException();
     }
+}
+
+export const updateFollowingStatus = async (userId: number, followedUserId: number) => {
+    const [follower, created] = await Follower.findOrCreate({
+        where: {
+            followedUserId,
+            followerUserId:userId
+        },
+        defaults: {}
+    });
+    if (!created) {
+        follower.destroy();
+        return `User ${userId} stopped following user ${followedUserId}`;
+    }
+    return `User ${userId} started following user ${followedUserId}`;
 }
