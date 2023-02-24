@@ -18,7 +18,7 @@ export const listAllVideos = async (req: Request, res: Response) => {
 export const createVideo = async (req: Request, res: Response) => {
     try {
         const video = await saveVideo(req.body);
-        res.json({video});
+        res.json({ video });
     } catch (error) {
         res.status(error.status).json({ error: error.message });
     }
@@ -27,8 +27,12 @@ export const createVideo = async (req: Request, res: Response) => {
 export const changePublish = async (req: videoRequest, res: Response) => {
     try {
         const video = await changePublishParamater(req.body.published, req.video);
-        res.json({video});
+        res.json({ video });
     } catch (error) {
         res.status(error.status).json({ error: error.message });
     }
+}
+
+export const videoDetails = async (req: videoRequest, res: Response) => {
+    res.json({ video: req.video });
 }
