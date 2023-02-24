@@ -7,7 +7,8 @@ export interface userProfileRequest extends Request {
 }
 
 export const userExists = async (req: userProfileRequest, res: Response, next: NextFunction) => {
-    const user = await User.findByPk(req.params.userId, {
+    const userId = req.params.userId || req.body.userId;
+    const user = await User.findByPk(userId, {
         include: [Video]
     });
     if (!user) return res.status(404).json({ error: 'User not found' });
