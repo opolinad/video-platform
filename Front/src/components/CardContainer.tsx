@@ -11,7 +11,6 @@ const CardContainer = () => {
         fetch(`http://${process.env.REACT_APP_API_URL}/video`)
             .then(response => response.json())
             .then(response => {
-                console.log(response);
                 setVideosInformation(response.rows);
             });
     }, []);
