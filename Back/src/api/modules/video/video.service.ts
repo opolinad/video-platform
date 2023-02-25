@@ -1,4 +1,5 @@
 import LikedVideo from '../../../db/models/likedVideo.model';
+import User from '../../../db/models/user.model';
 import Video from '../../../db/models/video.model'
 import { ServerException } from '../../errors/serverException.errors';
 import { paginateResults, pagination } from '../../utils/paginationItems.utils';
@@ -13,7 +14,7 @@ interface videoInformation{
 
 export const getVideos = async (paginationItems: pagination) => {
     const { limit, offset, pageNumber } = paginationItems;
-    const videos = await Video.findAndCountAll({ limit, offset });
+    const videos = await Video.findAndCountAll({ limit, offset, include:[User] });
     const videosPaginated = paginateResults(videos, limit, pageNumber, 'video');
     return videosPaginated;
 }
