@@ -7,7 +7,7 @@ import videoRoutes from './video.routes';
 const router:Router = express.Router();
 
 router.use('/auth', authRoutes);
-router.all('*',isUserAuthenticated);
+// router.all('*',isUserAuthenticated);
 router.use('/user', userRoutes);
 router.use('/video', videoRoutes);
 
